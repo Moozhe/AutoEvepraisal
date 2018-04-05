@@ -17,22 +17,44 @@ namespace AutoEvepraisal
 {
     public partial class Popup : Window
     {
-        public string Text
+        private const int Margin = 10;
+
+        public string SellValue
         {
             get
             {
-                return textBox.Text;
+                return sellValue.Text;
             }
             set
             {
-                textBox.Text = value;
+                sellValue.Text = value;
+            }
+        }
+
+        public string BuyValue
+        {
+            get
+            {
+                return buyValue.Text;
+            }
+            set
+            {
+                buyValue.Text = value;
             }
         }
 
         public Popup()
         {
             InitializeComponent();
+
+            this.Loaded += Popup_Loaded;
         }
 
+        private void Popup_Loaded(object sender, RoutedEventArgs e)
+        {
+            var workArea = SystemParameters.WorkArea;
+            this.Left = workArea.Right - this.Width - Margin;
+            this.Top = workArea.Bottom - this.Height - Margin;
+        }
     }
 }

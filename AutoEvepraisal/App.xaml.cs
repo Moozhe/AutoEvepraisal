@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -53,8 +55,13 @@ namespace AutoEvepraisal
 
                         if (response.IsSuccessStatusCode)
                         {
+                            var responseBody = response.Content.ReadAsStringAsync().Result;
                             var popup = new Popup();
-                            popup.Text = response.Content.ReadAsStringAsync().Result;
+
+                            var jbody = JObject.Parse(responseBody);
+                            var totals = jbody["appraisal"]["totals"];
+                            popup.BuyValue = FormatIsk(totals["buy"].ToString());
+                            popup.SellValue = FormatIsk(totals["sell"].ToString());
                             popup.Show();
 
                             var hideTimer = new DispatcherTimer
@@ -69,6 +76,23 @@ namespace AutoEvepraisal
                         }
                     }
                 }
+            }
+        }
+
+        private string FormatIsk(string raw)
+        {
+            double val = double.Parse(raw);
+            if (val >= 1000000000)
+            {
+                return val.ToString("0,,,.###B", CultureInfo.InvariantCulture);
+            }
+            else if (val >= 1000000)
+            {
+                return val.ToString("0,,.##M", CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                return val.ToString("0,.#K", CultureInfo.InvariantCulture);
             }
         }
     }
