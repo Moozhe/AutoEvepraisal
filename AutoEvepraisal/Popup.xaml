@@ -10,10 +10,10 @@
         <Border BorderThickness="2" BorderBrush="Black" Background="#FFC9C994">
             <Grid>
                 <TextBlock Text="Appraisal Results" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Margin="0,10,0,0" />
-                <TextBlock Text="Sell:" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="21.333" Margin="70,47,149,55" FontFamily="Verdana" />
-                <TextBlock x:Name="sellValue" Text="1.0B" FontSize="21.333" Margin="123,47,0,55" HorizontalAlignment="Left" VerticalAlignment="Center" FontFamily="Verdana" Width="107" />
-                <TextBlock Text="Buy:" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="21.333" Margin="69,78,148,24" FontFamily="Verdana" />
-                <TextBlock x:Name="buyValue" Text="1.0B" FontSize="21.333" Margin="124,78,0,24" HorizontalAlignment="Left" VerticalAlignment="Center" FontFamily="Verdana" Width="106" />
+                <TextBlock Text="Sell:" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="21.333" Margin="64,51,163,59" FontFamily="Verdana" />
+                <TextBlock x:Name="sellValue" Text="1.0B" FontSize="21.333" Margin="0,51,63,59" HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="Verdana" Width="95" TextAlignment="Right" />
+                <TextBlock Text="Buy:" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="21.333" Margin="63,82,163,28" FontFamily="Verdana" />
+                <TextBlock x:Name="buyValue" Text="1.0B" FontSize="21.333" Margin="0,82,63,28" HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="Verdana" Width="95" TextAlignment="Right" />
             </Grid>
         </Border>
     </Grid>
