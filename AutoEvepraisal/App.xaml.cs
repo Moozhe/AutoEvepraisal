@@ -15,7 +15,7 @@ namespace AutoEvepraisal
 {
     public partial class App : Application
     {
-        private const string ItemLineRegexFormat = "^[0-9]+ [A-Za-z0-9\\- ]+$";
+        private const string ItemLineRegexFormat = "^[0-9]+ [A-Za-z0-9\\- \\(\\)\\']+$";
 
         private HttpClient _httpClient;
         private string _lastClipboardContents;
@@ -41,42 +41,48 @@ namespace AutoEvepraisal
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (Clipboard.ContainsText())
+            try
             {
-                var clipboardText = Clipboard.GetText();
-                if (_lastClipboardContents != clipboardText)
+                if (Clipboard.ContainsText())
                 {
-                    _lastClipboardContents = clipboardText;
-
-                    var match = Regex.Match(clipboardText, ItemLineRegexFormat, RegexOptions.Multiline);
-                    if (match.Success)
+                    var clipboardText = Clipboard.GetText();
+                    if (_lastClipboardContents != clipboardText)
                     {
-                        var response = _httpClient.PostAsync($"appraisal.json?market=jita&raw_textarea={Uri.EscapeUriString(clipboardText)}&persist=no", new StringContent(String.Empty)).Result;
+                        _lastClipboardContents = clipboardText;
 
-                        if (response.IsSuccessStatusCode)
+                        var match = Regex.Match(clipboardText, ItemLineRegexFormat, RegexOptions.Multiline);
+                        if (match.Success)
                         {
-                            var responseBody = response.Content.ReadAsStringAsync().Result;
-                            var popup = new Popup();
+                            var content = new StringContent(String.Empty);
+                            content.Headers.Add("UserAgent", "AutoEvepraisal");
+                            var response = _httpClient.PostAsync($"appraisal.json?market=jita&raw_textarea={Uri.EscapeUriString(clipboardText)}&persist=no", content).Result;
 
-                            var jbody = JObject.Parse(responseBody);
-                            var totals = jbody["appraisal"]["totals"];
-                            popup.BuyValue = FormatIsk(totals["buy"].ToString());
-                            popup.SellValue = FormatIsk(totals["sell"].ToString());
-                            popup.Show();
+                            if (response.IsSuccessStatusCode)
+                            {
+                                var responseBody = response.Content.ReadAsStringAsync().Result;
+                                var popup = new Popup();
 
-                            var hideTimer = new DispatcherTimer
-                            {
-                                Interval = TimeSpan.FromSeconds(4),
-                            };
-                            hideTimer.Tick += (s, _) =>
-                            {
-                                popup.Close();
-                            };
-                            hideTimer.Start();
+                                var jbody = JObject.Parse(responseBody);
+                                var totals = jbody["appraisal"]["totals"];
+                                popup.BuyValue = FormatIsk(totals["buy"].ToString());
+                                popup.SellValue = FormatIsk(totals["sell"].ToString());
+                                popup.Show();
+
+                                var hideTimer = new DispatcherTimer
+                                {
+                                    Interval = TimeSpan.FromSeconds(4),
+                                };
+                                hideTimer.Tick += (s, _) =>
+                                {
+                                    popup.Close();
+                                };
+                                hideTimer.Start();
+                            }
                         }
                     }
                 }
             }
+            catch { } // We don't care if this fails for whatever reason
         }
 
         private string FormatIsk(string raw)
